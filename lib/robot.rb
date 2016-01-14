@@ -17,6 +17,7 @@ class Robot
   end
 
   def attack(enemy)
+    attack!(enemy)
     return false unless enemy_in_range?(enemy)
     if equipped_weapon
       equipped_weapon.hit(enemy)
@@ -27,11 +28,20 @@ class Robot
     end
   end
 
+  def heal!(heal_points)
+      raise RobotAlreadyDeadError.new "HP is already 0, robots can't be revived" if @health <= MIN_HP
+  end
+
+  def attack!(enemy)
+      raise UnattackableEnemy.new "Can only attack robots" unless enemy.is_a? Robot 
+  end
+
   def wound(attack_power)
     health - attack_power >= MIN_HP ? @health -= attack_power : @health = MIN_HP
   end
 
   def heal(heal_points)
+    heal!(heal_points)
     health + heal_points <= MAX_HP ? @health += heal_points : @health = MAX_HP
   end
 
